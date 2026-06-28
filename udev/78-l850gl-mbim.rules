@@ -1,0 +1,4 @@
+# Fibocom L850-GL / Intel XMM7360 in USB MBIM mode
+ACTION!="add|change|move", GOTO="l850gl_mbim_end"
+SUBSYSTEM=="usbmisc", KERNEL=="cdc-wdm*", ATTRS{idVendor}=="2cb7", ATTRS{idProduct}=="0007", ENV{ID_MM_CANDIDATE}="1", ENV{ID_MM_PORT_TYPE_MBIM}="1"
+LABEL="l850gl_mbim_end"

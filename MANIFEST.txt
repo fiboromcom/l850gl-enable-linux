@@ -1,0 +1,11 @@
+MANIFEST.txt
+README.md
+diagnostics.sh
+docs/RELEASE_NOTES.md
+install-acpi-call-module.sh
+install.sh
+scripts/l850gl-boot-recovery.sh
+scripts/l850gl-manual-rescue.sh
+systemd/l850gl-boot-rescue.service
+udev/78-l850gl-mbim.rules
+uninstall-boot-recovery.sh
