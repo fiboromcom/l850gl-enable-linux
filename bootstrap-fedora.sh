@@ -55,6 +55,31 @@ clone_or_update() {
   fi
 }
 
+
+if [[ "${SKIP_FCC_PREREQ_CHECK:-0}" != "1" && ! -f /etc/l850gl-fcc-unlock.done ]]; then
+  cat <<'EOF'
+ERROR: FCC unlock prerequisite marker not found:
+
+  /etc/l850gl-fcc-unlock.done
+
+Run the prerequisite repo first:
+
+  git clone https://github.com/fiboromcom/l850gl-fcc-unlock-linux.git
+  cd l850gl-fcc-unlock-linux
+  ./bootstrap-fedora.sh --yes-i-understand-regulatory-risk
+
+If you have already cleared the FCC lock manually and accept responsibility:
+
+  sudo touch /etc/l850gl-fcc-unlock.done
+
+Or bypass this check for one run:
+
+  SKIP_FCC_PREREQ_CHECK=1 ./bootstrap-fedora.sh
+
+EOF
+  exit 2
+fi
+
 log "Installing Fedora package dependencies"
 sudo dnf install -y \
   git make gcc kernel-devel kernel-headers \

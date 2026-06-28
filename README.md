@@ -87,6 +87,38 @@ ModemManager adopts Fibocom L850-GL using cdc-wdm0
 NetworkManager brings up voxi
 ```
 
+## Prerequisite: FCC lock cleared
+
+This enable repo assumes the L850-GL FCC lock has already been cleared.
+
+Run the prerequisite repo first:
+
+```bash
+sudo dnf install -y git
+git clone https://github.com/fiboromcom/l850gl-fcc-unlock-linux.git
+cd l850gl-fcc-unlock-linux
+./bootstrap-fedora.sh --yes-i-understand-regulatory-risk
+```
+
+That writes the marker consumed by this repo:
+
+```text
+/etc/l850gl-fcc-unlock.done
+```
+
+If the FCC lock was already cleared manually before using this repo:
+
+```bash
+sudo touch /etc/l850gl-fcc-unlock.done
+```
+
+To bypass the bootstrap check for one run:
+
+```bash
+SKIP_FCC_PREREQ_CHECK=1 ./bootstrap-fedora.sh
+```
+
+
 ## Fresh Fedora bootstrap
 
 After a clean Fedora install, connect with Wi-Fi, Ethernet, or USB tethering first.

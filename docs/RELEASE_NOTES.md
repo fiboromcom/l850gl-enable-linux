@@ -12,6 +12,7 @@ Bundled known-working state:
 - MBIM udev rule
 - diagnostics helper
 - boot persistence via `l850gl-boot-rescue.service`
+- FCC unlock prerequisite marker check in bootstrap
 
 Confirmed boot-persistent with:
 
