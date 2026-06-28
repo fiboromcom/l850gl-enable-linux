@@ -87,6 +87,27 @@ ModemManager adopts Fibocom L850-GL using cdc-wdm0
 NetworkManager brings up voxi
 ```
 
+## Fresh Fedora bootstrap
+
+After a clean Fedora install, connect with Wi-Fi, Ethernet, or USB tethering first.
+
+```bash
+sudo dnf install -y git
+git clone https://github.com/fiboromcom/l850gl-enable-linux.git
+cd l850gl-enable-linux
+./bootstrap-fedora.sh
+```
+
+The bootstrap script installs Fedora dependencies, clones the two external source trees into `~/src`, installs this recovery bundle, and builds/installs `acpi_call` for the running kernel.
+
+External repos used by the bootstrap script:
+
+```text
+https://github.com/mkottman/acpi_call.git
+https://github.com/xmm7360/xmm7360-usb-modeswitch.git
+```
+
+
 ## Install
 
 From the extracted directory:
