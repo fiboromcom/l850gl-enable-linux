@@ -25,8 +25,33 @@ if [[ -r "$ENV_FILE" ]]; then
   set +a
 fi
 
-L850GL_USER="${L850GL_USER:-aidan}"
-L850GL_HOME="${L850GL_HOME:-/home/${L850GL_USER}}"
+resolve_user_home() {
+  if [[ -z "${L850GL_USER:-}" ]]; then
+    if [[ -n "${SUDO_USER:-}" && "${SUDO_USER}" != "root" ]]; then
+      L850GL_USER="$SUDO_USER"
+    elif [[ -n "${USER:-}" && "${USER}" != "root" ]]; then
+      L850GL_USER="$USER"
+    else
+      L850GL_USER="$(awk -F: '$3 >= 1000 && $1 != "nobody" { print $1; exit }' /etc/passwd)"
+    fi
+  fi
+
+  if [[ -z "${L850GL_USER:-}" ]]; then
+    echo "ERROR: could not infer non-root user. Set L850GL_USER and L850GL_HOME in /etc/default/l850gl-recovery." >&2
+    exit 1
+  fi
+
+  if [[ -z "${L850GL_HOME:-}" ]]; then
+    L850GL_HOME="$(getent passwd "$L850GL_USER" 2>/dev/null | cut -d: -f6)"
+  fi
+
+  if [[ -z "${L850GL_HOME:-}" ]]; then
+    echo "ERROR: could not infer home directory for $L850GL_USER. Set L850GL_HOME in /etc/default/l850gl-recovery." >&2
+    exit 1
+  fi
+}
+
+resolve_user_home
 
 CON_NAME="${CON_NAME:-voxi}"
 APN="${APN:-wap.vodafone.co.uk}"

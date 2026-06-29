@@ -9,11 +9,21 @@ if [[ -r "$ENV_FILE" ]]; then
   set +a
 fi
 
-L850GL_USER="${L850GL_USER:-${SUDO_USER:-aidan}}"
-if [[ "$L850GL_USER" == "root" ]]; then
-  L850GL_USER="aidan"
+L850GL_USER="${L850GL_USER:-${SUDO_USER:-}}"
+if [[ -z "$L850GL_USER" || "$L850GL_USER" == "root" ]]; then
+  L850GL_USER="$(awk -F: '$3 >= 1000 && $1 != "nobody" { print $1; exit }' /etc/passwd)"
 fi
-L850GL_HOME="${L850GL_HOME:-/home/${L850GL_USER}}"
+
+if [[ -z "$L850GL_USER" ]]; then
+  echo "ERROR: could not infer target user. Re-run with L850GL_USER and L850GL_HOME set."
+  exit 1
+fi
+
+L850GL_HOME="${L850GL_HOME:-$(getent passwd "$L850GL_USER" 2>/dev/null | cut -d: -f6)}"
+if [[ -z "$L850GL_HOME" ]]; then
+  echo "ERROR: could not infer home directory for $L850GL_USER. Re-run with L850GL_HOME set."
+  exit 1
+fi
 
 ACPI_SRC="${ACPI_SRC:-${L850GL_HOME}/src/acpi_call}"
 KVER="$(uname -r)"

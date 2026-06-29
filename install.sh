@@ -8,13 +8,21 @@ if [[ $EUID -ne 0 ]]; then
   exit 1
 fi
 
-TARGET_USER="${L850GL_USER:-${SUDO_USER:-aidan}}"
-if [[ "$TARGET_USER" == "root" ]]; then
-  TARGET_USER="aidan"
+TARGET_USER="${L850GL_USER:-${SUDO_USER:-}}"
+if [[ -z "$TARGET_USER" || "$TARGET_USER" == "root" ]]; then
+  TARGET_USER="$(awk -F: '$3 >= 1000 && $1 != "nobody" { print $1; exit }' /etc/passwd)"
+fi
+
+if [[ -z "$TARGET_USER" ]]; then
+  echo "ERROR: could not infer target user. Re-run with L850GL_USER and L850GL_HOME set."
+  exit 1
 fi
 
 TARGET_HOME="${L850GL_HOME:-$(getent passwd "$TARGET_USER" 2>/dev/null | cut -d: -f6)}"
-TARGET_HOME="${TARGET_HOME:-/home/${TARGET_USER}}"
+if [[ -z "$TARGET_HOME" ]]; then
+  echo "ERROR: could not infer home directory for $TARGET_USER. Re-run with L850GL_HOME set."
+  exit 1
+fi
 
 CON_NAME="${CON_NAME:-voxi}"
 APN="${APN:-wap.vodafone.co.uk}"
